@@ -1,0 +1,81 @@
+module traffic_lights(input clk,reset,output reg red,yellow,green);
+  
+  parameter S0 = 2'b00, //RED
+  			S1 = 2'b01, //YELLOW
+  			S2 = 2'b10; //GREEN
+  
+  parameter Red_Time = 5,
+  			Yellow_Time = 2,
+  			Green_Time = 3;
+  
+  reg [1:0] current_state,next_state;
+  reg [3:0] count,limit;
+  
+  always@(posedge clk or posedge reset)
+    begin
+      if(reset)
+        begin
+          current_state<=S0;
+          count<=0;
+        end
+      else
+        begin
+          if(count == limit -1)
+            begin
+              current_state<=next_state;
+              count<=0;
+            end
+          else
+            count<=count+1;
+        end
+    end
+  
+  always@(*)
+    begin
+      case(current_state)
+        S0 : next_state = S1;
+        S1 : next_state = S2;
+        S2 : next_state = S0;
+        default : next_state = S0;
+      endcase
+    end
+  
+  always@(*)
+    begin
+      case(current_state)
+        S0 : limit = Red_Time;
+        S1 : limit = Yellow_Time;
+        S2 : limit = Green_Time;
+        default : limit = Red_Time;
+      endcase 
+    end
+  
+  always@(*)
+    begin
+      case(current_state)
+        S0 : begin
+          red = 1;
+          yellow = 0;
+          green = 0;
+        end
+        S1 : begin
+          red = 0;
+          yellow = 1;
+          green = 0;
+        end
+        S2 : begin
+          red = 0;
+          yellow = 0;
+          green = 1;
+        end
+        default : begin
+          red = 0;
+          yellow = 0;
+          green =0;
+        end
+      endcase
+    end
+endmodule
+        
+  
+  
