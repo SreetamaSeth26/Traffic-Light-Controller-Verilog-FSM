@@ -1,0 +1,24 @@
+module tb;
+  
+  reg clk,reset;
+  wire red,yellow,green;
+  
+  traffic_lights uut (clk,reset,red,yellow,green);
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk=~clk;
+    end
+  
+  initial
+    begin
+      $dumpfile("dump.vcd");
+      $dumpvars(0,tb); 
+      $monitor("Time = %0t Count =%0d || Red = %b Yellow = %b Green = %b",$time,uut.count,red,yellow,green);
+      reset=1;
+      #10 reset=0;
+      
+      #200 $finish;
+    end
+endmodule
